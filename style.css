@@ -39,7 +39,7 @@ body {
 }
 
 .user-message {
-  background: #0078ff;
+  background: #269a72;
   color: #fff;
   align-self: flex-end;
 }
@@ -64,12 +64,12 @@ body {
 }
 
 .input-area button:first-of-type {
-  background: #0078ff;
+  background: #269a72;
   color: white;
 }
 
 .input-area button:first-of-type:hover {
-  background: #005ec2;
+  background: #269a72;
 }
 
 .clear-btn {

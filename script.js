@@ -1,7 +1,6 @@
 // Dicionário de respostas
 const responses = {
-  "curso": ["Este curso é de ADS 😃", "Estamos aprendendo Chatbots com JS!"],
-  "adeus": ["Tchau! Até logo!", "Foi bom conversar com você, volte sempre."],
+  "adeus": ["Volte sempre!", "Fico feliz em poder ajudar, volte sempre."],
   "tudo bem": ["Tudo ótimo, e você?", "Estou bem, obrigado por perguntar!"],
   "obrigado": ["De nada!", "Por nada! Estou aqui para ajudar."]
 };
