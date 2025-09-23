@@ -2,7 +2,8 @@
 const responses = {
   "adeus": ["Volte sempre!", "Fico feliz em poder ajudar, volte sempre."],
   "tudo bem": ["Tudo ótimo, e você?", "Estou bem, obrigado por perguntar!"],
-  "obrigado": ["De nada!", "Por nada! Estou aqui para ajudar."]
+  "obrigado": ["De nada!", "Por nada! Estou aqui para ajudar."],
+  "brunno": ["Brunno é um buxa professor! 👨‍🏫", "Adoro as aulas do Brunno!"]
 };
 
 let userName = null; // memória do nome do usuário
@@ -47,9 +48,13 @@ function greetingByTime() {
 
 // Captura a mensagem do usuário
 function sendMessage() {
+  
   const inputField = document.getElementById("user-input");
   const userText = inputField.value.trim();
-  if (userText === "") return;
+
+  if (userText === "") {
+    return;
+  }
 
   appendMessage(userText, "user-message");
 
@@ -87,6 +92,8 @@ function appendMessage(text, className) {
 // Limpar chat
 function clearChat() {
   const chatBox = document.getElementById("chat-box");
+  const hasUserMessage = chatBox.querySelector(".user-message");
+  if (!hasUserMessage) return; // não limpa se não houver mensagem do usuário
   chatBox.innerHTML = '<div class="bot-message">Chat limpo! 👋 Vamos recomeçar: olá!</div>';
   userName = null; // reseta memória
 }
