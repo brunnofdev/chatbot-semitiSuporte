@@ -5,12 +5,41 @@ const responses = {
   "obrigado": ["De nada!", "Por nada! Estou aqui para ajudar."],
   "brunno": ["Brunno é um buxa professor! 👨‍🏫", "Adoro as aulas do Brunno!"]
 };
+const trackingResponses = {
+  "rastreio": ["O produto está em rota de entrega.", "O produtos está passando por nossa central de distribuição.",
+    "O produto está passando pelo procedimento de importação", "O produto está em trânsito para o país de destino"],
+  "tempo": ["Em 3 dias", "Em 8 dias", "Amanhã", "Nunca"]
+}
 
+let contexto = null; //salva contexto da conversa
 let userName = null; // memória do nome do usuário
+let dadosColetados = {}; // memória para dados coletados
 
 // Respostas do chatbot
 function getBotResponse(input) {
   input = input.toLowerCase();
+  
+  if (contexto != null) {
+    return ResponseWithContext(input);
+  }
+
+  if (input.includes("1") || input.includes("garantia")) {
+    if (userName === null) {
+      contexto = "pedindo_nome";
+      return 'Antes de prosseguirmos, por favor, forneça seu nome.';
+    }
+    contexto = "garantia";
+    return "Você selecionou 'Garantia'. Poderia me passar o nome e código do produto?";
+  }
+
+  if (input.includes("2") || input.includes("rastrear")) {
+    if (userName === null) {
+      contexto = "pedindo_nome";
+      return 'Antes de prosseguirmos, por favor, forneça seu nome.';
+    }
+    contexto = "rastreio";
+    return "Você selecionou 'Rastrear produto'. Poderia me passar o código de rastreio do produto?";
+  }
 
   // Cumprimento com base no horário
   if (input.includes("oi") || input.includes("olá") || input.includes("ola")) {
@@ -94,6 +123,54 @@ function clearChat() {
   const chatBox = document.getElementById("chat-box");
   const hasUserMessage = chatBox.querySelector(".user-message");
   if (!hasUserMessage) return; // não limpa se não houver mensagem do usuário
-  chatBox.innerHTML = '<div class="bot-message">Chat limpo! 👋 Vamos recomeçar: olá!</div>';
+  chatBox.innerHTML = '<div class="bot-message">Olá, eu sou o Jonas, seu assistente virtual, como poderia ajudar? <br> Digite o número de acordo com o problema: <br> 1.Garantia <br> 2.Problemas na entrega <br> 3.Devolução</div>';
   userName = null; // reseta memória
+  contexto = null; // reseta contexto
+  dadosColetados = {}; // reseta dados coletados
 }
+
+function ResponseWithContext(input) {
+  
+  if (contexto === "pedindo_nome")  {
+    userName = input.charAt(0).toUpperCase() + input.slice(1);
+    contexto = null;
+    return `Prazer em conhecer você, ${userName}! Como posso ajudar?`;
+  }
+
+  if (contexto === "garantia") {
+    dadosColetados.produto = input;
+    contexto = "garantia_data";
+    return "Obrigado! Agora, por favor, informe a data da compra (DD/MM/AAAA).";
+  }
+  if (contexto === "garantia_data") {
+    dadosColetados.dataCompra = input;
+    contexto = "garantia_descrição"; 
+    return `Perfeito! Agora, por favor, descreva o problema que você está enfrentando com o ${dadosColetados.produto}.`;
+  }
+  if (contexto === "garantia_descrição") {
+    dadosColetados.descrição = input;
+    contexto = "garantia_contato"; 
+    return `Obrigado pela descrição. Antes de finalizarmos, forneça um e-mail ou telefone para contato.`;
+  }
+  if (contexto === "garantia_contato") {
+    dadosColetados.contato = input;
+    mensagemFinal = `Obrigado, ${userName ? userName : ''}! Coletamos as seguintes informações:\n-Produto: ${dadosColetados.produto}\n-Data da Compra: ${dadosColetados.dataCompra}\n-Descrição do Problema: ${dadosColetados.descrição}\n-Contato: ${dadosColetados.contato}\nNossa equipe entrará em contato em breve para ajudar com sua garantia.`;
+    dadosColetados = {};
+    contexto = null;
+    return mensagemFinal;
+  }
+  if (contexto === "rastreio") {
+    dadosColetados.rastreio = input;
+
+    const possibleReplies = trackingResponses['rastreio'];
+    estado = possibleReplies[Math.floor(Math.random() * possibleReplies.length)];
+    const possibleReplies2 = trackingResponses['tempo'];
+    tempo = possibleReplies2[Math.floor(Math.random() * possibleReplies2.length)];
+
+    mensagemFinal = 'Código do produto: ' + dadosColetados.rastreio + '\nEstado do produto: ' + estado + '\n Tempo previsto para entrega: ' + tempo;
+    contexto = null;
+    dadosColetados = {};
+    return mensagemFinal;
+  }
+
+  }
