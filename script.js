@@ -11,6 +11,7 @@ const trackingResponses = {
   "tempo": ["Em 3 dias", "Em 8 dias", "Amanhã", "Nunca"]
 }
 
+let contextoPróximo = null; // contexto futuro
 let contexto = null; //salva contexto da conversa
 let userName = null; // memória do nome do usuário
 let dadosColetados = {}; // memória para dados coletados
@@ -26,6 +27,7 @@ function getBotResponse(input) {
   if (input.includes("1") || input.includes("garantia")) {
     if (userName === null) {
       contexto = "pedindo_nome";
+      contextoPróximo = "garantia";
       return 'Antes de prosseguirmos, por favor, forneça seu nome.';
     }
     contexto = "garantia";
@@ -35,6 +37,7 @@ function getBotResponse(input) {
   if (input.includes("2") || input.includes("rastrear")) {
     if (userName === null) {
       contexto = "pedindo_nome";
+      contextoPróximo = "rastreio";
       return 'Antes de prosseguirmos, por favor, forneça seu nome.';
     }
     contexto = "rastreio";
@@ -123,7 +126,7 @@ function clearChat() {
   const chatBox = document.getElementById("chat-box");
   const hasUserMessage = chatBox.querySelector(".user-message");
   if (!hasUserMessage) return; // não limpa se não houver mensagem do usuário
-  chatBox.innerHTML = '<div class="bot-message">Olá, eu sou o Jonas, seu assistente virtual, como poderia ajudar? <br> Digite o número de acordo com o problema: <br> 1.Garantia <br> 2.Problemas na entrega <br> 3.Devolução</div>';
+  chatBox.innerHTML = '<div class="bot-message">Olá, eu sou o Jonas, seu assistente virtual, como poderia ajudar? <br> Digite o número de acordo com o problema:<br> <br> 1 - Garantia do consumidor <br> 2 - Rastrear produto </div>';
   userName = null; // reseta memória
   contexto = null; // reseta contexto
   dadosColetados = {}; // reseta dados coletados
@@ -133,8 +136,14 @@ function ResponseWithContext(input) {
   
   if (contexto === "pedindo_nome")  {
     userName = input.charAt(0).toUpperCase() + input.slice(1);
-    contexto = null;
-    return `Prazer em conhecer você, ${userName}! Como posso ajudar?`;
+    contexto = contextoPróximo;
+    contextoPróximo = null;
+    mensagemfinal = `Prazer em conhecer você, ${userName}!`;
+    if (contexto === "garantia") {
+      return mensagemfinal + "\nVocê selecionou 'Garantia'. Poderia me passar o nome e código do produto?";
+    } else {
+      return mensagemfinal + "\nVocê selecionou 'Rastrear produto'. Poderia me passar o código de rastreio do produto?";
+    }
   }
 
   if (contexto === "garantia") {
@@ -162,10 +171,10 @@ function ResponseWithContext(input) {
   if (contexto === "rastreio") {
     dadosColetados.rastreio = input;
 
-    const possibleReplies = trackingResponses['rastreio'];
-    estado = possibleReplies[Math.floor(Math.random() * possibleReplies.length)];
-    const possibleReplies2 = trackingResponses['tempo'];
-    tempo = possibleReplies2[Math.floor(Math.random() * possibleReplies2.length)];
+    const possibleReplies2 = trackingResponses['rastreio'];
+    estado = possibleReplies2[Math.floor(Math.random() * possibleReplies2.length)];
+    const possibleReplies3 = trackingResponses['tempo'];
+    tempo = possibleReplies3[Math.floor(Math.random() * possibleReplies3.length)];
 
     mensagemFinal = 'Código do produto: ' + dadosColetados.rastreio + '\nEstado do produto: ' + estado + '\n Tempo previsto para entrega: ' + tempo;
     contexto = null;
@@ -173,4 +182,10 @@ function ResponseWithContext(input) {
     return mensagemFinal;
   }
 
+  }
+
+  function sendWithEnter(event) {
+    if (event.key === "Enter") {
+      sendMessage();
+    }
   }
