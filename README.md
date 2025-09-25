@@ -1,6 +1,3 @@
-Com certeza! Um bom README.md é essencial para qualquer projeto. Ele serve como uma porta de entrada, explicando o que é o projeto, seu propósito e como usá-lo.
-
-Aqui está uma sugestão de README.md simples e informativo para o seu chatbot, formatado em Markdown. Você pode criar um arquivo chamado README.md na pasta do seu projeto e colar o texto abaixo.
 
 Chatbot de Suporte Simples em JavaScript
 
